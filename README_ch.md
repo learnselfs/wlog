@@ -1,9 +1,3 @@
-
-
-# wlog
-
-wlog is a structured logger for Go (golang), completely API compatible with the standard library logger.
-
 <!-- PROJECT SHIELDS -->
 
 [![Contributors][contributors-shield]][contributors-url]
@@ -17,13 +11,13 @@ wlog is a structured logger for Go (golang), completely API compatible with the 
 <br />
 
 <p align="center">
-  <a href="https://github.com/learnselfs/whs/">
+  <a href="https://github.com/learnselfs/wlog/">
     <img src="logo.png" alt="Logo"  height="80">
   </a>
 
-<h3 align="center">"完美的"README模板</h3>
+<h3 align="center"></h3>
   <p align="center">
-    一个"完美的"README模板去快速开始你的项目！
+wlog是Go（golang）的结构化记录器，与标准库记录器完全兼容API。
     <br />
     <a href="https://github.com//learnselfs/wlog"><strong>探索本项目的文档 »</strong></a>
     <br />
@@ -37,9 +31,7 @@ wlog is a structured logger for Go (golang), completely API compatible with the 
 
 </p>
 
-
-本篇README.md面向开发者
-
+[English](./README.md) | 中文 
 ## 目录
 
 - [上手指南](#上手指南)
@@ -53,35 +45,63 @@ wlog is a structured logger for Go (golang), completely API compatible with the 
 - [鸣谢](#鸣谢)
 
 ### 上手指南
-
+1. 直接使用 Debug、Info、Warn、Error、Fatal、Panic 
 ```go
+wlog.Debug("test message")
+wlog.Info("test message")
+wlog.Warn("test message")
+wlog.Error("test message")
+wlog.Fatal("test message")
+wlog.Panic("test message")
+```
+2. 标准库类型使用 
+````go
+wlog.Print("test message")
+wlog.Println("test message")
+wlog.Printf("%s","test message")
 
+wlog.Painc("test message")
+wlog.Paincln("test message")
+wlog.Paincf("%s","test message")
+````
+3. 自定义配置其他项数据
+```go
+l := New()
+f := make(Fields)
+f["field1"] = "value1"
+f["field2"] = "value2"
+l.WithFields(f).Info("test message")
+```
+4. 自定义输出格式(默认文本格式)
+```go
+l := New()
+l.SetJsonFormat()
+l.Info("test message")
+```
+5. 自定义输出
+```go
+l := New()
+f, _ := os.Create("test.json")
+defer f.Close()
+l.SetOutput(f)
+l.Info("test message")
 
 ```
-
-
-
+6. 输出
+```text
+level="info"	 time="2024-02-28 17:29:50"	message="test message"
+```
+```json
+{"level":"info","message":"test message","time":"2024-02-28 17:31:08"}
+```
 ###### 开发前的配置要求
 
-1. xxxxx x.x.x
-2. xxxxx x.x.x
+1. go version 1.21.1 
 
 ###### **安装步骤**
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-
-```sh
-git clone https://github.com/learnselfs/wlog.git
-```
-
-### 部署
-
-暂无
-
-### 使用到的框架
-
-暂无
+1. `go get github.com/learnselfs/wlog` 
+[github.com/learnselfs/wlog](https://pkg.go.dev/github.com/learnselfs/wlog)
 
 ### 贡献者
 
@@ -108,17 +128,15 @@ git clone https://github.com/learnselfs/wlog.git
 
 ### 版权说明
 
-该项目签署了MIT 授权许可，详情请参阅 [LICENSE.txt](https://github.com//learnselfs/wlog/blob/master/LICENSE)
+该项目签署了MIT 授权许可，详情请参阅 [LICENSE](https://github.com//learnselfs/wlog/blob/master/LICENSE)
 
 ### 鸣谢
 
 
-- [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-- [Img Shields](https://shields.io)
+- [logrus](https://github.com/sirupsen/logrus)
+- [Best_README_template](https://github.com/shaojintian/Best_README_template)
 - [Choose an Open Source License](https://choosealicense.com)
 - [GitHub Pages](https://pages.github.com)
-- [Animate.css](https://daneden.github.io/animate.css)
-- [xxxxxxxxxxxxxx](https://connoratherton.com/loaders)
 
 <!-- links -->
 [your-project-path]:/learnselfs/wlog

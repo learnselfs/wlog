@@ -29,7 +29,7 @@ func (t *TextFormat) Format(e *Entry) ([]byte, error) {
 	for _, k := range keys {
 		b.WriteString(k)
 		b.WriteString("=")
-		b.WriteString(fmt.Sprintf("%v", data[k]))
+		b.WriteString(fmt.Sprintf("\"%v\"", data[k]))
 		b.WriteString("\t")
 	}
 	b.WriteString("\n")
