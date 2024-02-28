@@ -5,16 +5,29 @@ package wlog
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 	"strconv"
 	"testing"
 )
 
-//	func TestWlog(t *testing.T) {
-//		Info.Println("Info testing start!!!")
-//		Error.Println("Error testing start!!!")
-//		Debug.Println("Debug testing start!!!")
-//	}
+func TestWlog(t *testing.T) {
+	//Info.Println("Info testing start!!!")
+	//Error.Println("Error testing start!!!")
+	//Debug.Println("Debug testing start!!!")
+	l := New()
+	l.SetJsonFormat()
+	l.Info("start")
+	Info("Start2")
+	//Panic("......")
+	f, err := os.Create("test.json")
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	l.SetOutput(f)
+	l.Info("Start")
+}
 func testRuntime() (uintptr, string, int, bool) {
 	return runtime.Caller(1)
 }
@@ -82,7 +95,7 @@ func BenchmarkNewLog(b *testing.B) {
 
 func BenchmarkNewTextLog(b *testing.B) {
 	l := New()
-	l.SetFormatText()
+	l.SetJsonFormat()
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {

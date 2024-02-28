@@ -3,21 +3,20 @@
 // @Desc
 package wlog
 
-import "encoding/json"
-
-const (
-	Timestamp string = "time"
-	LogLevel  string = "level"
-	Message   string = "message"
-	Errors    string = "error"
-	Call      string = "call"
+import (
+	"encoding/json"
+	"time"
 )
+
+const ()
 
 var (
 	dataLength int
 )
 
-type JsonFormat struct{}
+type JsonFormat struct {
+	TimeFormat string // time format
+}
 
 func (j *JsonFormat) Format(entry *Entry) ([]byte, error) {
 
@@ -44,8 +43,12 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 	}
 
 	data := make(Fields, len(e.data)+dataLength)
-	data[LogLevel] = e.level
-	data[Timestamp] = e.time
+	level, err := e.level.Marshal()
+	if err != nil {
+		data[Errors] = err.Error()
+	}
+	data[LogLevel] = level
+	data[Timestamp] = e.time.Format(j.TimeFormat)
 	data[Message] = e.msg
 	//data[Errors] = e.error
 	if e.log.reportCaller {
@@ -56,4 +59,10 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 	}
 
 	return data
+}
+
+func DefaultJsonFormat() *JsonFormat {
+	return &JsonFormat{
+		TimeFormat: time.DateTime,
+	}
 }

@@ -30,7 +30,7 @@ func (d *DefaultEntryPool) Get() *Entry {
 func (d *DefaultEntryPool) Set(e *Entry) {
 	d.pool.Put(e)
 }
-func init() {
+func initPool() {
 	bufferPool = &DefaultBufferPool{
 		pool: &sync.Pool{
 			New: func() interface{} {

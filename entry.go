@@ -4,6 +4,7 @@
 package wlog
 
 import (
+	"os"
 	"time"
 )
 
@@ -66,6 +67,11 @@ func (e *Entry) Error(msg string) {
 }
 func (e *Entry) Fatal(msg string) {
 	e.Log(FatalLevel, msg)
+	os.Exit(1)
+}
+func (e *Entry) Panic(msg string) {
+	e.Log(PanicLevel, msg)
+	panic(msg)
 }
 
 func (e *Entry) withFields(fields Fields) {
@@ -75,7 +81,7 @@ func (e *Entry) withFields(fields Fields) {
 }
 
 func (e *Entry) write() {
-	byteData, err := e.log.format.Format(e)
+	byteData, err := e.log.Format.Format(e)
 	if err != nil {
 		return
 	}

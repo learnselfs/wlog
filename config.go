@@ -13,20 +13,19 @@ const (
 	WarnLevel
 	ErrorLevel
 	FatalLevel
+	PanicLevel
 
-	// format
-
+	Timestamp string = "time"
+	LogLevel  string = "level"
+	Message   string = "message"
+	Errors    string = "error"
+	Call      string = "call"
 )
 
 var (
-	//Debug *log.Logger
-	//Info  *log.Logger
-	//Warn  *log.Logger
-	//Error *log.Logger
-	//Fatal *log.Logger
-
 	bufferPool BufferPool
 	entryPool  EntryPool
+	log        *Log
 )
 
 type (
