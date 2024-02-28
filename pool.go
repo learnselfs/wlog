@@ -8,14 +8,14 @@ import (
 	"sync"
 )
 
-type DefaultPool struct {
+type DefaultBufferPool struct {
 	pool *sync.Pool
 }
 
-func (p *DefaultPool) Get() *bytes.Buffer {
+func (p *DefaultBufferPool) Get() *bytes.Buffer {
 	return p.pool.Get().(*bytes.Buffer)
 }
-func (p *DefaultPool) Set(b *bytes.Buffer) {
+func (p *DefaultBufferPool) Set(b *bytes.Buffer) {
 	b.Reset()
 	p.pool.Put(b)
 }
@@ -28,12 +28,10 @@ func (d *DefaultEntryPool) Get() *Entry {
 	return d.pool.Get().(*Entry)
 }
 func (d *DefaultEntryPool) Set(e *Entry) {
-	e.msg = ""
-	e.data = nil
 	d.pool.Put(e)
 }
-func init() {
-	bufferPool = &DefaultPool{
+func initPool() {
+	bufferPool = &DefaultBufferPool{
 		pool: &sync.Pool{
 			New: func() interface{} {
 				return new(bytes.Buffer)

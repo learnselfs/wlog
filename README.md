@@ -3,20 +3,30 @@
 #### Description
 simple logger
 
-#### Software Architecture
-Software architecture description
-
 #### Installation
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+`go get github.com/learnselfs/wlog`
 
 #### Instructions
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```go
+l := wlog.New()
+// l.SetFormatText() set text format output  
+l.Info("data")
+```
+```json
+{"level":1,"message":"msg","out":"out","time":"2024-02-26T10:52:43.6462286+08:00"}
+```
+
+```go
+l := wlog.New()
+f := make(Fields)
+f["out"] = "out"
+f["in"] = "in"
+l.WithFields(f).Info("msg")
+```
+```json
+{"in":"in","level":1,"message":"msg","out":"out","time":"2024-02-26T10:52:43.6462286+08:00"}
+```
 
 #### Contribution
 
@@ -26,11 +36,5 @@ Software architecture description
 4.  Create Pull Request
 
 
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#### THANKS
+- [Logrus](https://github.com/sirupsen/logrus)

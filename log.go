@@ -4,6 +4,7 @@
 package wlog
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
@@ -17,17 +18,18 @@ type Log struct {
 	entryPool  EntryPool
 	bufferPool BufferPool
 	// format
-	format ReportFormat
+	Format ReportFormat
 	output io.Writer
 	mu     *Mu
 }
 
+// New create default logger
 func New() *Log {
 	l := &Log{
 		level:        InfoLevel,
 		reportCaller: false,
 		bufferPool:   bufferPool,
-		format:       new(JsonFormat),
+		Format:       DefaultTextFormat(),
 		output:       os.Stdout,
 		mu:           NewMutex(),
 	}
@@ -36,12 +38,14 @@ func New() *Log {
 	return l
 }
 
+// SetLevel  define log level
 func (l *Log) SetLevel(level Level) {
 	l.level = level
 }
 
-func (l *Log) SetFormatText() {
-	l.format = new(defaultTextFormat)
+// SetJsonFormat define log output format
+func (l *Log) SetJsonFormat() {
+	l.Format = DefaultJsonFormat()
 }
 
 func (l *Log) isLevelEnabled(level Level) bool {
@@ -49,25 +53,61 @@ func (l *Log) isLevelEnabled(level Level) bool {
 }
 
 func (l *Log) Debug(msg string) {
-	entry := NewEntry(l)
+	entry := l.newEntry()
 	entry.Debug(msg)
 }
 func (l *Log) Info(msg string) {
-	entry := NewEntry(l)
+	entry := l.newEntry()
 	entry.Info(msg)
 }
 
 func (l *Log) Warn(msg string) {
-	entry := NewEntry(l)
+	entry := l.newEntry()
 	entry.Warn(msg)
 }
 func (l *Log) Error(msg string) {
-	entry := NewEntry(l)
+	entry := l.newEntry()
 	entry.Error(msg)
 }
 func (l *Log) Fatal(msg string) {
-	entry := NewEntry(l)
+	entry := l.newEntry()
 	entry.Fatal(msg)
+}
+
+func (l *Log) Fatalln(msg string) {
+	entry := l.newEntry()
+	entry.Fatal(msg)
+}
+
+func (l *Log) Fatalf(format string, msg ...any) {
+	entry := l.newEntry()
+	entry.Fatal(fmt.Sprintf(format, msg...))
+}
+
+func (l *Log) Panic(msg string) {
+	entry := l.newEntry()
+	entry.Panic(msg)
+}
+func (l *Log) Panicln(msg string) {
+	entry := l.newEntry()
+	entry.Panic(msg)
+}
+
+func (l *Log) Panicf(format string, msg ...any) {
+	entry := l.newEntry()
+	entry.Panic(fmt.Sprintf(format, msg...))
+}
+
+func (l *Log) Print(msg string) {
+	l.Info(msg)
+}
+
+func (l *Log) Println(msg string) {
+	l.Info(msg)
+}
+
+func (l *Log) Printf(format string, msg ...any) {
+	l.Info(fmt.Sprintf(format, msg...))
 }
 
 func (l *Log) newEntry() *Entry {
@@ -76,13 +116,19 @@ func (l *Log) newEntry() *Entry {
 }
 
 func (l *Log) releaseEntry(e *Entry) {
-	e.data = make(Fields)
 	l.entryPool.Set(e)
 }
 
+// WithFields appends fields to log
 func (l *Log) WithFields(fields Fields) *Entry {
 	entry := l.newEntry()
-	defer l.releaseEntry(entry)
 	entry.withFields(fields)
 	return entry
+}
+
+// SetOutput define log output
+func (l *Log) SetOutput(output io.Writer) {
+	l.mu.Lock()
+	defer l.mu.UnLock()
+	l.output = output
 }

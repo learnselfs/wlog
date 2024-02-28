@@ -4,6 +4,7 @@
 package wlog
 
 import (
+	"os"
 	"time"
 )
 
@@ -20,7 +21,7 @@ func NewEntry(log *Log) *Entry {
 	return &Entry{
 		log:  log,
 		time: time.Now(),
-		data: make(Fields, 6),
+		data: make(Fields),
 	}
 }
 
@@ -34,14 +35,16 @@ func (e *Entry) Dup() *Entry {
 
 func (e *Entry) handleLog(level Level, msg string) {
 	//newEntry := e.Dup()
-	newEntry := e.log.entryPool.Get()
-	defer e.log.entryPool.Set(newEntry)
-	newEntry.level = level
-	newEntry.msg = msg
+	//newEntry := e.log.newEntry()
+	defer e.clear()
+	defer e.log.releaseEntry(e)
+	e.level = level
+	e.msg = msg
 
 	// handle entry data Fields
 	// and handle format data
-	newEntry.write()
+	e.write()
+
 }
 
 func (e *Entry) Log(level Level, msg string) {
@@ -64,17 +67,21 @@ func (e *Entry) Error(msg string) {
 }
 func (e *Entry) Fatal(msg string) {
 	e.Log(FatalLevel, msg)
+	os.Exit(1)
+}
+func (e *Entry) Panic(msg string) {
+	e.Log(PanicLevel, msg)
+	panic(msg)
 }
 
 func (e *Entry) withFields(fields Fields) {
-	data := e.data
-	for i, v := range fields {
-		data[i] = v
+	for k, v := range fields {
+		e.data[k] = v
 	}
 }
 
 func (e *Entry) write() {
-	byteData, err := e.log.format.Format(e)
+	byteData, err := e.log.Format.Format(e)
 	if err != nil {
 		return
 	}
@@ -82,4 +89,9 @@ func (e *Entry) write() {
 	if err != nil {
 		return
 	}
+}
+
+func (e *Entry) clear() {
+	e.data = make(Fields)
+	e.msg = ""
 }
