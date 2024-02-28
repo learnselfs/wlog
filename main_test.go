@@ -5,28 +5,28 @@ package wlog
 
 import (
 	"fmt"
-	"os"
 	"runtime"
 	"strconv"
 	"testing"
 )
 
 func TestWlog(t *testing.T) {
-	//Info.Println("Info testing start!!!")
-	//Error.Println("Error testing start!!!")
-	//Debug.Println("Debug testing start!!!")
+	Info("Info testing start!!!")
+	Error("Error testing start!!!")
+	Debug("Debug testing start!!!")
 	l := New()
 	l.SetJsonFormat()
-	l.Info("start")
-	Info("Start2")
-	//Panic("......")
-	f, err := os.Create("test.json")
-	if err != nil {
-		return
-	}
-	defer f.Close()
-	l.SetOutput(f)
-	l.Info("Start")
+	l.Info("test message")
+	//Info("test message")
+	////Panic("......")
+	//f, err := os.Create("test.json")
+	//if err != nil {
+	//	return
+	//}
+	//defer f.Close()
+	//l.SetOutput(f)
+	//l.Info("test message")
+
 }
 func testRuntime() (uintptr, string, int, bool) {
 	return runtime.Caller(1)
@@ -67,7 +67,7 @@ func TestRuntimes(t *testing.T) {
 
 func TestNewLog(t *testing.T) {
 	l := New()
-	l.Info("afjiaejefajiofaj")
+	l.Info("test message")
 }
 
 func BenchmarkNewLog(b *testing.B) {
@@ -75,7 +75,7 @@ func BenchmarkNewLog(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 
-			l.Info("aaaaaaaaaaaaaa")
+			l.Info("test message")
 		}
 	})
 }
@@ -88,7 +88,7 @@ func BenchmarkNewLog(b *testing.B) {
 //	b.RunParallel(func(pb *testing.PB) {
 //		for pb.Next() {
 //
-//			l.Info("aaaaaaaaaaaaaa")
+//			l.Info("test message")
 //		}
 //	})
 //}
@@ -99,7 +99,7 @@ func BenchmarkNewTextLog(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			l.Info("aaaaaaaaaaaaaaaa")
+			l.Info("test message")
 		}
 	})
 }
@@ -107,11 +107,10 @@ func BenchmarkNewTextLog(b *testing.B) {
 func BenchmarkNewField(b *testing.B) {
 	l := New()
 	f := make(Fields)
-	f["out"] = "out"
-	f["in"] = "in"
+	f["field"] = "value"
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			l.WithFields(f).Info("aaaaaaaaaaaaaaaa")
+			l.WithFields(f).Info("test message")
 		}
 	})
 }
@@ -124,7 +123,7 @@ func BenchmarkNewField(b *testing.B) {
 //	f["in"] = "in"
 //	b.RunParallel(func(pb *testing.PB) {
 //		for pb.Next() {
-//			l.WithFields(f).Info("aaaaaaaaaaaaaaaa")
+//			l.WithFields(f).Info("test message")
 //		}
 //	})
 //}
