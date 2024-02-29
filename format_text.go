@@ -38,13 +38,7 @@ func (t *TextFormat) Format(e *Entry) ([]byte, error) {
 }
 
 func (t *TextFormat) parse(e *Entry) Fields {
-
-	if e.log.reportCaller {
-		dataLength = 4
-	}
-	dataLength = 3
-
-	data := make(Fields, dataLength+len(e.data))
+	data := make(Fields)
 	level, err := e.level.Marshal()
 	if err != nil {
 		data[" "+Errors] = err
@@ -53,7 +47,7 @@ func (t *TextFormat) parse(e *Entry) Fields {
 	data[" "+Timestamp] = e.time.Format(t.TimeFormat)
 	data[Message] = e.msg
 
-	for k, v := range data {
+	for k, v := range e.data {
 		data[k] = v
 	}
 	return data

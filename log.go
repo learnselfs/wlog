@@ -120,10 +120,16 @@ func (l *Log) releaseEntry(e *Entry) {
 }
 
 // WithFields appends fields to log
-func (l *Log) WithFields(fields Fields) *Entry {
+func (l *Log) WithFields(fields Fields) {
 	entry := l.newEntry()
 	entry.withFields(fields)
-	return entry
+	l.releaseEntry(entry)
+}
+
+func (l *Log) WithField(key string, value any) {
+	f := make(Fields)
+	f[key] = value
+	l.WithFields(f)
 }
 
 // SetOutput define log output
