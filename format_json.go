@@ -15,7 +15,9 @@ var (
 )
 
 type JsonFormat struct {
-	TimeFormat string // time format
+	DisableTime  bool
+	DisableLevel bool
+	TimeFormat   string // time format
 }
 
 func (j *JsonFormat) Format(entry *Entry) ([]byte, error) {
@@ -47,8 +49,12 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 	if err != nil {
 		data[Errors] = err.Error()
 	}
-	data[LogLevel] = level
-	data[Timestamp] = e.time.Format(j.TimeFormat)
+	if !j.DisableLevel {
+		data[LogLevel] = level
+	}
+	if !j.DisableTime {
+		data[Timestamp] = e.time.Format(j.TimeFormat)
+	}
 	data[Message] = e.msg
 	//data[Errors] = e.error
 	if e.log.reportCaller {

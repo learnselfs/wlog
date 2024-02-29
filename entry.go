@@ -37,6 +37,7 @@ func (e *Entry) handleLog(level Level, msg string) {
 	//newEntry := e.Dup()
 	//newEntry := e.log.newEntry()
 	defer e.log.releaseEntry(e)
+	e.data = e.log.fields
 	e.level = level
 	e.msg = msg
 

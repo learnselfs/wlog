@@ -21,6 +21,7 @@ type Log struct {
 	Format ReportFormat
 	output io.Writer
 	mu     *Mu
+	fields Fields
 }
 
 // New create default logger
@@ -32,6 +33,7 @@ func New() *Log {
 		Format:       DefaultTextFormat(),
 		output:       os.Stdout,
 		mu:           NewMutex(),
+		fields:       make(Fields),
 	}
 	NewEntryPool(l)
 	l.entryPool = entryPool
@@ -121,9 +123,9 @@ func (l *Log) releaseEntry(e *Entry) {
 
 // WithFields appends fields to log
 func (l *Log) WithFields(fields Fields) {
-	entry := l.newEntry()
-	entry.withFields(fields)
-	l.releaseEntry(entry)
+	for k, v := range fields {
+		l.fields[k] = v
+	}
 }
 
 func (l *Log) WithField(key string, value any) {
@@ -137,4 +139,9 @@ func (l *Log) SetOutput(output io.Writer) {
 	l.mu.Lock()
 	defer l.mu.UnLock()
 	l.output = output
+}
+
+// SetFormatter custom log formatter
+func (l *Log) SetFormatter(f ReportFormat) {
+	l.Format = f
 }
