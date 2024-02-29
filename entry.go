@@ -36,7 +36,6 @@ func (e *Entry) Dup() *Entry {
 func (e *Entry) handleLog(level Level, msg string) {
 	//newEntry := e.Dup()
 	//newEntry := e.log.newEntry()
-	defer e.clear()
 	defer e.log.releaseEntry(e)
 	e.level = level
 	e.msg = msg

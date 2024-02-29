@@ -59,7 +59,8 @@ l := New()
 f := make(Fields)
 f["field1"] = "value1"
 f["field2"] = "value2"
-l.WithFields(f).Info("test message")
+l.WithFields(f)
+l.Info("test message")
 ```
 4. Custom output format (default text format)
 ```go
