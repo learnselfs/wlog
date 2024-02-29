@@ -58,32 +58,42 @@ func (l *Log) Debug(msg string) {
 	entry := l.newEntry()
 	entry.Debug(msg)
 }
+func (l *Log) Debugf(format string, msg ...any) {
+	l.Debug(fmt.Sprintf(format, msg...))
+}
 func (l *Log) Info(msg string) {
 	entry := l.newEntry()
 	entry.Info(msg)
 }
 
+func (l *Log) Infof(format string, msg ...any) {
+	l.Info(fmt.Sprintf(format, msg...))
+}
 func (l *Log) Warn(msg string) {
 	entry := l.newEntry()
 	entry.Warn(msg)
+}
+func (l *Log) Warnf(format string, msg ...any) {
+	l.Warn(fmt.Sprintf(format, msg...))
 }
 func (l *Log) Error(msg string) {
 	entry := l.newEntry()
 	entry.Error(msg)
 }
+func (l *Log) Errorf(format string, msg ...any) {
+	l.Error(fmt.Sprintf(format, msg...))
+}
 func (l *Log) Fatal(msg string) {
 	entry := l.newEntry()
 	entry.Fatal(msg)
+}
+func (l *Log) Fatalf(format string, msg ...any) {
+	l.Fatal(fmt.Sprintf(format, msg...))
 }
 
 func (l *Log) Fatalln(msg string) {
 	entry := l.newEntry()
 	entry.Fatal(msg)
-}
-
-func (l *Log) Fatalf(format string, msg ...any) {
-	entry := l.newEntry()
-	entry.Fatal(fmt.Sprintf(format, msg...))
 }
 
 func (l *Log) Panic(msg string) {
