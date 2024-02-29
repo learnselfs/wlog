@@ -15,9 +15,11 @@ var (
 )
 
 type JsonFormat struct {
+	TimeFormat string // time format
+
 	DisableTime  bool
 	DisableLevel bool
-	TimeFormat   string // time format
+	DisableColor bool
 }
 
 func (j *JsonFormat) Format(entry *Entry) ([]byte, error) {
@@ -38,14 +40,15 @@ func (j *JsonFormat) Format(entry *Entry) ([]byte, error) {
 }
 
 func (j *JsonFormat) Parse(e *Entry) Fields {
-	if e.log.reportCaller {
-		dataLength = 4
-	} else {
-		dataLength = 3
-	}
 
-	data := make(Fields, len(e.data)+dataLength)
-	level, err := e.level.Marshal()
+	data := make(Fields)
+	var level string
+	var err error
+	if !j.DisableColor {
+		level, err = e.level.MarshalColor()
+	} else {
+		level, err = e.level.Marshal()
+	}
 	if err != nil {
 		data[Errors] = err.Error()
 	}
@@ -69,6 +72,7 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 
 func DefaultJsonFormat() *JsonFormat {
 	return &JsonFormat{
-		TimeFormat: time.DateTime,
+		TimeFormat:   time.DateTime,
+		DisableColor: true,
 	}
 }

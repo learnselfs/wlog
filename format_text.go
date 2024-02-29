@@ -4,6 +4,7 @@
 package wlog
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
 	"time"
@@ -15,6 +16,7 @@ type TextFormat struct {
 	// Disable
 	DisableTime  bool
 	DisableLevel bool
+	DisableColor bool
 }
 
 func (t *TextFormat) Format(e *Entry) ([]byte, error) {
@@ -30,11 +32,12 @@ func (t *TextFormat) Format(e *Entry) ([]byte, error) {
 	}
 	sort.Strings(keys)
 	for _, k := range keys {
-		b.WriteString(k)
-		b.WriteString("=")
-		b.WriteString(fmt.Sprintf("\"%v\"", data[k]))
-		b.WriteString("\t")
+		if k == Message {
+			continue
+		}
+		writeKeyValue(b, k, data[k])
 	}
+	writeKeyValue(b, Message, data[Message])
 	b.WriteString("\n")
 	return b.Bytes(), nil
 
@@ -42,7 +45,13 @@ func (t *TextFormat) Format(e *Entry) ([]byte, error) {
 
 func (t *TextFormat) parse(e *Entry) Fields {
 	data := make(Fields)
-	level, err := e.level.Marshal()
+	var level string
+	var err error
+	if !t.DisableColor {
+		level, err = e.level.MarshalColor()
+	} else {
+		level, err = e.level.Marshal()
+	}
 	if err != nil {
 		data[" "+Errors] = err
 	}
@@ -64,4 +73,11 @@ func DefaultTextFormat() *TextFormat {
 	return &TextFormat{
 		TimeFormat: time.DateTime,
 	}
+}
+
+func writeKeyValue(b *bytes.Buffer, key string, value interface{}) {
+	b.WriteString(key)
+	b.WriteString("=")
+	b.WriteString(fmt.Sprintf("\"%v\"", value))
+	b.WriteString("\t")
 }
