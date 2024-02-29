@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestWlog(t *testing.T) {
@@ -17,11 +18,16 @@ func TestWlog(t *testing.T) {
 	//Debug("Debug testing start!!!")
 	l := New()
 	l.SetJsonFormat()
+	l.Format = &JsonFormat{
+		DisableTime:  true,
+		DisableLevel: true,
+		TimeFormat:   time.RFC850,
+	}
 	f := make(Fields)
 	f["key"] = "value"
 	l.WithFields(f)
 	l.WithField("field", "value")
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 100; i++ {
 		l.Info("test Message")
 	}
 }
