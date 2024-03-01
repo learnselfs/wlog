@@ -5,6 +5,7 @@ package wlog
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"sort"
 	"time"
@@ -25,26 +26,30 @@ func (t *TextFormat) Format(e *Entry) ([]byte, error) {
 	b := e.log.bufferPool.Get()
 	defer e.log.bufferPool.Set(b)
 
-	data := t.parse(e)
+	fields := t.parse(e)
 	var keys []string
-	for k := range data {
+	for k := range fields {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 	for _, k := range keys {
-		if k == Message {
+		if k == Message || k == Errors {
 			continue
 		}
-		writeKeyValue(b, k, data[k])
+		writeKeyValue(b, k, fields[k])
 	}
-	writeKeyValue(b, Message, data[Message])
+	if fields[Message] == nil || fields[Message] == "" || fields[Errors] == nil {
+	} else {
+		writeKeyValue(b, Errors, fields[Errors])
+		writeKeyValue(b, Message, fields[Message])
+	}
 	b.WriteString("\n")
 	return b.Bytes(), nil
 
 }
 
 func (t *TextFormat) parse(e *Entry) Fields {
-	data := make(Fields)
+	fields := make(Fields)
 	var level string
 	var err error
 	if !t.DisableColor {
@@ -53,20 +58,28 @@ func (t *TextFormat) parse(e *Entry) Fields {
 		level, err = e.level.Marshal()
 	}
 	if err != nil {
-		data[" "+Errors] = err
+		e.error = errors.Join(e.error, err)
+	}
+	if e.error != nil {
+		fields[Errors] = e.error
 	}
 	if !t.DisableLevel {
-		data[" "+LogLevel] = level
+		fields[" "+LogLevel] = level
 	}
 	if !t.DisableTime {
-		data[" "+Timestamp] = e.time.Format(t.TimeFormat)
+		fields[" "+Timestamp] = e.time.Format(t.TimeFormat)
 	}
-	data[Message] = e.msg
+	if e.log.reportCaller {
+		fields[CallFile] = e.frame.File
+		fields[CallLine] = e.frame.Line
+		fields[CallFunc] = e.frame.Function
+	}
+	fields[Message] = e.msg
 
-	for k, v := range e.data {
-		data[k] = v
+	for k, v := range e.fields {
+		fields[k] = v
 	}
-	return data
+	return fields
 }
 
 func DefaultTextFormat() *TextFormat {

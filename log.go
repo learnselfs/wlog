@@ -155,3 +155,7 @@ func (l *Log) SetOutput(output io.Writer) {
 func (l *Log) SetFormatter(f ReportFormat) {
 	l.Format = f
 }
+
+func (l *Log) ReportCaller() {
+	l.reportCaller = !l.reportCaller
+}

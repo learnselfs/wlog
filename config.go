@@ -19,7 +19,9 @@ const (
 	LogLevel  string = "level"
 	Message   string = "message"
 	Errors    string = "error"
-	Call      string = "call"
+	CallFile  string = "file"
+	CallFunc  string = "func"
+	CallLine  string = "line"
 )
 
 var (
