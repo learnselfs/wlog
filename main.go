@@ -6,7 +6,7 @@ package wlog
 func init() {
 	initPool()
 	log = New()
-	log.SetLevel(FatalLevel)
+	log.SetLevel(InfoLevel)
 }
 
 func Debug(msg string) {
