@@ -51,7 +51,7 @@ func (l *Log) SetJsonFormat() {
 }
 
 func (l *Log) isLevelEnabled(level Level) bool {
-	return l.level >= level
+	return l.level <= level
 }
 
 func (l *Log) Debug(msg string) {
