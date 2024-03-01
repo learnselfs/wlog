@@ -38,9 +38,11 @@ func (t *TextFormat) Format(e *Entry) ([]byte, error) {
 		}
 		writeKeyValue(b, k, fields[k])
 	}
-	if fields[Message] == nil || fields[Message] == "" || fields[Errors] == nil {
-	} else {
+	if fields[Errors] != nil {
 		writeKeyValue(b, Errors, fields[Errors])
+	}
+	if fields[Message] == nil || fields[Message] == "" {
+	} else {
 		writeKeyValue(b, Message, fields[Message])
 	}
 	b.WriteString("\n")

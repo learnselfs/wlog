@@ -56,7 +56,7 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 	if !j.DisableTime {
 		fields[Timestamp] = e.time.Format(j.TimeFormat)
 	}
-	if fields[Message] == nil || fields[Message] == "" {
+	if e.msg == "" {
 	} else {
 		fields[Message] = e.msg
 	}
