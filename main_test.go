@@ -18,7 +18,7 @@ func TestWlog(t *testing.T) {
 	l := New()
 	l.ReportCaller()
 	//l.SetLevel(PanicLevel)
-	l.SetJsonFormat()
+	//l.SetJsonFormat()
 	//l.Format = &JsonFormat{
 	//	DisableTime:  true,
 	//	DisableLevel: true,
@@ -29,8 +29,8 @@ func TestWlog(t *testing.T) {
 	l.WithFields(f)
 	l.WithField("field", "value")
 	for i := 0; i < 1; i++ {
-		l.Debug("test Message")
-		//l.Info("test Message")
+		//l.Debug("test Message")
+		l.Info("test Message")
 		//l.Warn("test Message")
 		//l.Error("test Message")
 		//l.Fatal("test Message")
