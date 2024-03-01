@@ -77,12 +77,22 @@ l.SetOutput(f)
 l.Info("test message")
 
 ```
-6. Output
-```text
-level="info"	 time="2024-02-28 17:29:50"	message="test message"
+6. Caller 
+```go
+l := New()
+l.ReportCaller()
+f := make(Fields)
+f["key"] = "value"
+defer f.Close()
+l.SetOutput(f)
+l.Info("test message")
+``
+7. Output 
+```stdout
+level="error"	 time="2024-03-01 13:24:03"	field="value"	file="D:/**/go/src/testing/testing.go"	func="testing.tRunner"	key="value"	line="1595"	
 ```
 ```json
-{"level":"info","message":"test message","time":"2024-02-28 17:31:08"}
+{"error":"this log level is info, not call debug()","field":"value","file":"D:/**/go/src/testing/testing.go","func":"testing.tRunner","key":"value","level":"error","line":1595,"time":"2024-03-01 13:30:47"}
 ```
 ###### Pre development Configuration Requirements
 

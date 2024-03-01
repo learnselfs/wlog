@@ -5,13 +5,8 @@ package wlog
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
-)
-
-const ()
-
-var (
-	dataLength int
 )
 
 type JsonFormat struct {
@@ -41,7 +36,7 @@ func (j *JsonFormat) Format(entry *Entry) ([]byte, error) {
 
 func (j *JsonFormat) Parse(e *Entry) Fields {
 
-	data := make(Fields)
+	fields := make(Fields)
 	var level string
 	var err error
 	if !j.DisableColor {
@@ -50,24 +45,32 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 		level, err = e.level.Marshal()
 	}
 	if err != nil {
-		data[Errors] = err.Error()
+		e.error = errors.Join(e.error, err)
+	}
+	if e.error != nil {
+		fields[Errors] = e.error.Error()
 	}
 	if !j.DisableLevel {
-		data[LogLevel] = level
+		fields[LogLevel] = level
 	}
 	if !j.DisableTime {
-		data[Timestamp] = e.time.Format(j.TimeFormat)
+		fields[Timestamp] = e.time.Format(j.TimeFormat)
 	}
-	data[Message] = e.msg
+	if fields[Message] == nil || fields[Message] == "" {
+	} else {
+		fields[Message] = e.msg
+	}
 	//data[Errors] = e.error
 	if e.log.reportCaller {
-		// todo: report call
+		fields[CallFile] = e.frame.File
+		fields[CallLine] = e.frame.Line
+		fields[CallFunc] = e.frame.Function
 	}
-	for k, v := range e.data {
-		data[k] = v
+	for k, v := range e.fields {
+		fields[k] = v
 	}
 
-	return data
+	return fields
 }
 
 func DefaultJsonFormat() *JsonFormat {
