@@ -11,6 +11,10 @@ func init() {
 	log.SetLevel(InfoLevel)
 }
 
+func ReportCal() {
+	log.ReportCaller()
+}
+
 func Debug(msg string) {
 	log.Debug(msg)
 }
