@@ -3,6 +3,8 @@
 // @Desc
 package wlog
 
+import "fmt"
+
 func init() {
 	initPool()
 	log = New()
@@ -10,7 +12,7 @@ func init() {
 }
 
 func Debug(msg string) {
-	log.Info(msg)
+	log.Debug(msg)
 }
 func Info(msg string) {
 	log.Info(msg)
@@ -28,10 +30,28 @@ func Fatal(msg string) {
 func Panic(msg string) {
 	log.Panic(msg)
 }
-func Panicln(msg string) {
-	log.Panic(msg)
+
+func Debugf(f string, msg ...any) {
+	log.ReportCaller()
+	log.Debug(fmt.Sprintf(f, msg...))
 }
 
+func Infof(f string, msg ...any) {
+	log.Info(fmt.Sprintf(f, msg...))
+}
+func Warnf(f string, msg ...any) {
+	log.Warn(fmt.Sprintf(f, msg...))
+}
+func Errorf(f string, msg ...any) {
+	log.Error(fmt.Sprintf(f, msg...))
+}
+func Fatalf(f string, msg ...any) {
+	log.Fatal(fmt.Sprintf(f, msg...))
+}
+
+func Panicf(f string, msg ...any) {
+	log.Panic(fmt.Sprintf(f, msg...))
+}
 func Print(msg string) {
 	log.Print(msg)
 }
