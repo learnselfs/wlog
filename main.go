@@ -35,6 +35,28 @@ func Panic(msg string) {
 	log.Panic(msg)
 }
 
+func Debugln(msg ...any) {
+	log.ReportCaller()
+	log.Debug(fmt.Sprintln(msg...))
+}
+
+func Infoln(msg ...any) {
+	log.Info(fmt.Sprintln(msg...))
+}
+func Warnln(msg ...any) {
+	log.Warn(fmt.Sprintln(msg...))
+}
+func Errorln(msg ...any) {
+	log.Error(fmt.Sprintln(msg...))
+}
+func Fatalln(msg ...any) {
+	log.Fatal(fmt.Sprintln(msg...))
+}
+
+func Panicln(msg ...any) {
+	log.Panic(fmt.Sprintln(msg...))
+}
+
 func Debugf(f string, msg ...any) {
 	log.ReportCaller()
 	log.Debug(fmt.Sprintf(f, msg...))
@@ -43,12 +65,15 @@ func Debugf(f string, msg ...any) {
 func Infof(f string, msg ...any) {
 	log.Info(fmt.Sprintf(f, msg...))
 }
+
 func Warnf(f string, msg ...any) {
 	log.Warn(fmt.Sprintf(f, msg...))
 }
+
 func Errorf(f string, msg ...any) {
 	log.Error(fmt.Sprintf(f, msg...))
 }
+
 func Fatalf(f string, msg ...any) {
 	log.Fatal(fmt.Sprintf(f, msg...))
 }
@@ -56,14 +81,15 @@ func Fatalf(f string, msg ...any) {
 func Panicf(f string, msg ...any) {
 	log.Panic(fmt.Sprintf(f, msg...))
 }
-func Print(msg string) {
-	log.Print(msg)
+
+func Print() {
+	log.Print()
 }
 
-func Println(msg string) {
-	log.Println(msg)
+func Println() {
+	log.Println()
 }
 
-func Printf(format, msg string) {
-	log.Printf(format, msg)
+func Printf() {
+	log.Printf()
 }
