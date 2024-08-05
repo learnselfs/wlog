@@ -13,7 +13,7 @@ type Log struct {
 	level Level
 
 	// report print caller information
-	reportCaller bool
+	isCallFrame bool
 	// entry pool
 	entryPool  EntryPool
 	bufferPool BufferPool
@@ -22,18 +22,21 @@ type Log struct {
 	output io.Writer
 	mu     *Mu
 	fields Fields
+
+	callFrameDepth int
 }
 
 // New create default logger
 func New() *Log {
 	l := &Log{
 		level:        InfoLevel,
-		reportCaller: false,
+		isCallFrame: false,
 		bufferPool:   bufferPool,
 		Format:       DefaultTextFormat(),
 		output:       os.Stdout,
 		mu:           NewMutex(),
 		fields:       make(Fields),
+		callFrameDepth: 0,
 	}
 	NewEntryPool(l)
 	l.entryPool = entryPool
@@ -45,9 +48,21 @@ func (l *Log) SetLevel(level Level) {
 	l.level = level
 }
 
+func (l *Log) CallFramesDepth(depths ...int){
+	if len(depths)==0 {
+		l.callFrameDepth = 1
+	}
+	l.callFrameDepth = depths[0]
+}
+
 // SetJsonFormat define log output format
-func (l *Log) SetJsonFormat() {
+func (l *Log) Json() {
 	l.Format = DefaultJsonFormat()
+}
+
+// SetJsonFormat define log output format
+func (l *Log) Text() {
+	l.Format = DefaultTextFormat()
 }
 
 func (l *Log) isLevelEnabled(level Level) bool {
@@ -73,7 +88,7 @@ func (l *Log) Info(msg string) {
 }
 
 func (l *Log) Infoln(msg ...any) {
-	l.Info(fmt.Sprintln(msg...))
+	l.Infoln(fmt.Sprintln(msg...))
 }
 
 func (l *Log) Infof(format string, msg ...any) {
@@ -132,8 +147,8 @@ func (l *Log) Panicf(format string, msg ...any) {
 	l.Panic(fmt.Sprintf(format, msg...))
 }
 
-func (l *Log) Print() {
-	l.Info("")
+func (l *Log) Print(args ...any) {
+	l.Infoln(args...)
 }
 
 func (l *Log) Println() {
@@ -174,42 +189,42 @@ func (l *Log) SetOutput(output io.Writer) {
 }
 
 // SetFormatter custom log formatter
-func (l *Log) SetFormatter(f ReportFormat) {
+func (l *Log) Formatter(f ReportFormat) {
 	l.Format = f
 }
 
-func (l *Log) SetJsonFormatDetail(timeFormat string, disableTime, disableColor, disableLevel bool) {
+func (l *Log) JsonFormatDetail(timeFormat string, disableTime, disableColor, disableLevel bool) {
 	l.Format = &JsonFormat{TimeFormat: timeFormat, DisableTime: disableTime, DisableColor: disableColor, DisableLevel: disableLevel}
 }
 
-func (l *Log) SetJsonTime(timeFormat string) {
-	l.SetJsonFormatDetail(timeFormat, false, false, false)
+func (l *Log) JsonTime(timeFormat string) {
+	l.JsonFormatDetail(timeFormat, false, false, false)
 }
 
-func (l *Log) SetJsonTimeDisable() {
-	l.SetJsonFormatDetail("", true, false, false)
+func (l *Log) JsonTimeDisable() {
+	l.JsonFormatDetail("", true, false, false)
 }
 
-func (l *Log) SetJsonColorDisable(timeFormat string) {
-	l.SetJsonFormatDetail(timeFormat, false, true, false)
+func (l *Log) JsonColorDisable(timeFormat string) {
+	l.JsonFormatDetail(timeFormat, false, true, false)
 }
 
-func (l *Log) SetTextFormatDetail(timeFormat string, disableTime, disableColor, disableLevel bool) {
+func (l *Log) TextFormatDetail(timeFormat string, disableTime, disableColor, disableLevel bool) {
 	l.Format = &TextFormat{TimeFormat: timeFormat, DisableTime: disableTime, DisableColor: disableColor, DisableLevel: disableLevel}
 }
 
-func (l *Log) SetTextTime(timeFormat string) {
-	l.SetTextFormatDetail(timeFormat, false, false, false)
+func (l *Log) TextTime(timeFormat string) {
+	l.TextFormatDetail(timeFormat, false, false, false)
 }
 
-func (l *Log) SetTextTimeDisable() {
-	l.SetTextFormatDetail("", true, false, false)
+func (l *Log) TextTimeDisable() {
+	l.TextFormatDetail("", true, false, false)
 }
 
-func (l *Log) SetTextColorDisable(timeFormat string) {
-	l.SetTextFormatDetail(timeFormat, false, true, false)
+func (l *Log) TextColorDisable(timeFormat string) {
+	l.TextFormatDetail(timeFormat, false, true, false)
 }
 
-func (l *Log) ReportCaller() {
-	l.reportCaller = !l.reportCaller
+func (l *Log) IsCallFrame() {
+	l.isCallFrame = !l.isCallFrame
 }

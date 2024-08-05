@@ -92,8 +92,8 @@ func (e *Entry) withFields(fields Fields) {
 }
 
 func (e *Entry) write() {
-	if e.log.reportCaller {
-		e.frame = e.reportCall()
+	if e.log.isCallFrame {
+		e.frame = e.CallFrame(e.log.callFrameDepth)
 	}
 	byteData, err := e.log.Format.Format(e)
 	if err != nil {
@@ -110,7 +110,7 @@ func (e *Entry) clear() {
 	e.msg = ""
 }
 
-func (e *Entry) reportCall() *runtime.Frame {
+func (e *Entry) CallFrame(depth int) *runtime.Frame {
 	ptr := make([]uintptr, 24)
 	runtime.Callers(0, ptr)
 	var minPtr int
@@ -127,7 +127,10 @@ func (e *Entry) reportCall() *runtime.Frame {
 		f, _ := frames.Next()
 		// 将 frame 中不包含 wlog package return
 		if !strings.Contains(f.Function, "wlog") {
-			return &f
+			if depth <= 0 {
+				return &f
+			}
+			depth --
 		}
 	}
 }
