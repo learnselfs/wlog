@@ -16,9 +16,9 @@ func TestWlog(t *testing.T) {
 	//Error("Error testing start!!!")
 	//Debug("Debug testing start!!!")
 	l := New()
-	l.ReportCaller()
+	l.IsCallFrame()
 	//l.SetLevel(PanicLevel)
-	l.SetJsonFormat()
+	l.Json()
 	//l.Format = &JsonFormat{
 	//	DisableTime:  true,
 	//	DisableLevel: true,
@@ -41,7 +41,7 @@ func TestWlog(t *testing.T) {
 
 func TestSetOutput(t *testing.T) {
 	l := New()
-	l.SetJsonFormat()
+	l.Json()
 	l.Info("test message")
 	Info("test message")
 	//Panic("......")
@@ -121,7 +121,7 @@ func BenchmarkNewLog(b *testing.B) {
 
 func BenchmarkNewTextLog(b *testing.B) {
 	l := New()
-	l.SetJsonFormat()
+	l.Json()
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {

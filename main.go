@@ -11,8 +11,8 @@ func init() {
 	log.SetLevel(InfoLevel)
 }
 
-func ReportCal() {
-	log.ReportCaller()
+func Print(msg string) {
+	log.Info(msg)
 }
 
 func Debug(msg string) {
@@ -36,12 +36,16 @@ func Panic(msg string) {
 }
 
 func Debugln(msg ...any) {
-	log.ReportCaller()
 	log.Debug(fmt.Sprintln(msg...))
 }
+func Println(msg ...any) {
+	log.Infoln(msg...)
+}
+
+
 
 func Infoln(msg ...any) {
-	log.Info(fmt.Sprintln(msg...))
+	log.Infoln(msg...)
 }
 func Warnln(msg ...any) {
 	log.Warn(fmt.Sprintln(msg...))
@@ -50,46 +54,61 @@ func Errorln(msg ...any) {
 	log.Error(fmt.Sprintln(msg...))
 }
 func Fatalln(msg ...any) {
-	log.Fatal(fmt.Sprintln(msg...))
+	log.Fatalln(msg...)
 }
 
 func Panicln(msg ...any) {
-	log.Panic(fmt.Sprintln(msg...))
+	log.Panicln(msg...)
 }
 
 func Debugf(f string, msg ...any) {
-	log.ReportCaller()
-	log.Debug(fmt.Sprintf(f, msg...))
+	log.Debugf(f, msg...)
 }
 
+func Printf(f string, msg ...any) {
+	log.Infof(f, msg...)
+}
 func Infof(f string, msg ...any) {
-	log.Info(fmt.Sprintf(f, msg...))
+	log.Infof(f, msg...)
 }
 
 func Warnf(f string, msg ...any) {
-	log.Warn(fmt.Sprintf(f, msg...))
+	log.Warnf(f, msg...)
 }
 
 func Errorf(f string, msg ...any) {
-	log.Error(fmt.Sprintf(f, msg...))
+	log.Errorf(f, msg...)
 }
 
 func Fatalf(f string, msg ...any) {
-	log.Fatal(fmt.Sprintf(f, msg...))
+	log.Fatalf(f, msg...)
 }
 
 func Panicf(f string, msg ...any) {
-	log.Panic(fmt.Sprintf(f, msg...))
+	log.Panicf(f, msg...)
 }
 
-func Print() {
-	log.Print()
+
+
+func IsCallFrame() {
+	log.IsCallFrame()
 }
 
-func Println() {
-	log.Println()
+func CallFramesDepth(depths ...int) {
+	log.CallFramesDepth(depths...)
 }
 
-func Printf() {
-	log.Printf()
+func Json(){
+	log.Json()
 }
+
+<<<<<<< HEAD
+func Text(){
+	log.Text()
+}
+
+=======
+func ReportCaller() {
+	log.ReportCaller()
+}
+>>>>>>> c6b78b30c3abf1111135f1998fcfc087cce61008
