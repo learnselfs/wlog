@@ -93,3 +93,7 @@ func Println() {
 func Printf() {
 	log.Printf()
 }
+
+func ReportCaller() {
+	log.ReportCaller()
+}
