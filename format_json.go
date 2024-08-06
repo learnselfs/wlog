@@ -61,7 +61,7 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 		fields[Message] = e.msg
 	}
 	//data[Errors] = e.error
-	if e.log.reportCaller {
+	if e.log.isCallFrame {
 		fields[CallFile] = e.frame.File
 		fields[CallLine] = e.frame.Line
 		fields[CallFunc] = e.frame.Function

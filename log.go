@@ -51,8 +51,9 @@ func (l *Log) SetLevel(level Level) {
 func (l *Log) CallFramesDepth(depths ...int){
 	if len(depths)==0 {
 		l.callFrameDepth = 1
-	}
+	}else{
 	l.callFrameDepth = depths[0]
+	}
 }
 
 // SetJsonFormat define log output format

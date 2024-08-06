@@ -143,15 +143,15 @@ func BenchmarkNewField(b *testing.B) {
 	})
 }
 
-//func BenchmarkLogrusField(b *testing.B) {
-//	l := logrus.New()
-//	l.SetFormatter(new(logrus.JSONFormatter))
-//	f := make(logrus.Fields)
-//	f["out"] = "out"
-//	f["in"] = "in"
-//	b.RunParallel(func(pb *testing.PB) {
-//		for pb.Next() {
-//			l.WithFields(f).Info("test message")
-//		}
-//	})
-//}
+// func BenchmarkLogrusField(b *testing.B) {
+// 	l := logrus.New()
+// 	l.SetFormatter(new(logrus.JSONFormatter))
+// 	f := make(logrus.Fields)
+// 	f["out"] = "out"
+// 	f["in"] = "in"
+// 	b.RunParallel(func(pb *testing.PB) {
+// 		for pb.Next() {
+// 			l.WithFields(f).Info("test message")
+// 		}
+// 	})
+// }

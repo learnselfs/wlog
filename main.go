@@ -102,13 +102,6 @@ func Json(){
 	log.Json()
 }
 
-<<<<<<< HEAD
 func Text(){
 	log.Text()
 }
-
-=======
-func ReportCaller() {
-	log.ReportCaller()
-}
->>>>>>> c6b78b30c3abf1111135f1998fcfc087cce61008
