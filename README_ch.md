@@ -91,7 +91,7 @@ l.Info("test message")
 6. caller 调用信息
 ```go
 l := New()
-l.ReportCaller()
+l.CallFrameDepth()
 f := make(Fields)
 f["key"] = "value"
 defer f.Close()
@@ -100,10 +100,10 @@ l.Info("test message")
 ``
 7. 输出
 ```stdout
-level="error"	 time="2024-03-01 13:24:03"	field="value"	file="D:/**/go/src/testing/testing.go"	func="testing.tRunner"	key="value"	line="1595"	
+level="error"	 time="2024-**-** 13:24:03"	field="value"	file="D:/**/go/src/testing/testing.go"	func="testing.tRunner"	key="value"	line="1595"	
 ```
 ```json
-{"error":"this log level is info, not call debug()","field":"value","file":"D:/**/go/src/testing/testing.go","func":"testing.tRunner","key":"value","level":"error","line":1595,"time":"2024-03-01 13:30:47"}
+{"error":"this log level is info, not call debug()","field":"value","file":"D:/**/go/src/testing/testing.go","func":"testing.tRunner","key":"value","level":"error","line":1595,"time":"2024-**-** 13:30:47"}
 ```
 ###### 开发前的配置要求
 

@@ -138,6 +138,7 @@ func BenchmarkNewField(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			//l.WithFields(f).Info("test message")
+			l.CallFramesDepth()
 			l.Info("test message")
 		}
 	})
