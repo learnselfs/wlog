@@ -29,13 +29,13 @@ type Log struct {
 // New create default logger
 func New() *Log {
 	l := &Log{
-		level:        InfoLevel,
-		isCallFrame: false,
-		bufferPool:   bufferPool,
-		Format:       DefaultTextFormat(),
-		output:       os.Stdout,
-		mu:           NewMutex(),
-		fields:       make(Fields),
+		level:          InfoLevel,
+		isCallFrame:    false,
+		bufferPool:     bufferPool,
+		Format:         DefaultTextFormat(),
+		output:         os.Stdout,
+		mu:             NewMutex(),
+		fields:         make(Fields),
 		callFrameDepth: 0,
 	}
 	NewEntryPool(l)
@@ -48,21 +48,21 @@ func (l *Log) SetLevel(level Level) {
 	l.level = level
 }
 
-func (l *Log) CallFramesDepth(depths ...int){
+func (l *Log) CallFramesDepth(depths ...int) {
 	l.isCallFrame = true
-	if len(depths)==0 {
+	if len(depths) == 0 {
 		l.callFrameDepth = 1
-	}else{
-	l.callFrameDepth = depths[0]
+	} else {
+		l.callFrameDepth = depths[0]
 	}
 }
 
-// SetJsonFormat define log output format
+// Json SetJsonFormat define log output format
 func (l *Log) Json() {
 	l.Format = DefaultJsonFormat()
 }
 
-// SetJsonFormat define log output format
+// Text SetJsonFormat define log output format
 func (l *Log) Text() {
 	l.Format = DefaultTextFormat()
 }
@@ -90,7 +90,7 @@ func (l *Log) Info(msg string) {
 }
 
 func (l *Log) Infoln(msg ...any) {
-	l.Infoln(fmt.Sprintln(msg...))
+	l.Info(fmt.Sprintln(msg...))
 }
 
 func (l *Log) Infof(format string, msg ...any) {
