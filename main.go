@@ -6,9 +6,12 @@ package wlog
 import "fmt"
 
 func init() {
+	Cron = newCron()
+	Cron.Start()
 	initPool()
 	log = New()
-	log.SetLevel(InfoLevel)
+	//log = New()
+
 }
 
 func Print(msg string) {
@@ -42,8 +45,6 @@ func Println(msg ...any) {
 	log.Infoln(msg...)
 }
 
-
-
 func Infoln(msg ...any) {
 	log.Infoln(msg...)
 }
@@ -68,6 +69,7 @@ func Debugf(f string, msg ...any) {
 func Printf(f string, msg ...any) {
 	log.Infof(f, msg...)
 }
+
 func Infof(f string, msg ...any) {
 	log.Infof(f, msg...)
 }
@@ -88,20 +90,18 @@ func Panicf(f string, msg ...any) {
 	log.Panicf(f, msg...)
 }
 
-
-
-func IsCallFrame() {
-	log.IsCallFrame()
+func CallFrame() {
+	log.CallFrame()
 }
 
 func CallFramesDepth(depths ...int) {
 	log.CallFramesDepth(depths...)
 }
 
-func Json(){
+func Json() {
 	log.Json()
 }
 
-func Text(){
+func Text() {
 	log.Text()
 }

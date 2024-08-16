@@ -19,6 +19,7 @@
 <h3 align="center"></h3>
   <p align="center">
 wlog is a structured logger for Go (golang), completely API compatible with the standard library logger.
+Support scheduled task log rotation.
     <br />
     <a href="https://github.com//learnselfs/wlog"><strong> markdown »</strong></a>
     <br />
@@ -55,38 +56,49 @@ wlog.Paincf("%s","test message")
 ````
 3. Custom configuration of other item data
 ```go
-l := New()
-f := make(Fields)
-f["field1"] = "value1"
-f["field2"] = "value2"
-l.WithFields(f)
-l.Info("test message")
+log := wlog.New()
+log.Console()
+log.WithKeys("a", "b", "c")
+for i := 1; i < 100; i++ {
+    log.Values(i, i, i).Info("")
+}
 ```
 4. Custom output format (default text format)
 ```go
-l := New()
-l.SetJsonFormat()
+l := wlog.New()
+l.Json() // l.Text()
 l.Info("test message")
 ```
-5. Custom output
+5. cron rotate log
 ```go
-l := New()
-f, _ := os.Create("test.json")
-defer f.Close()
-l.SetOutput(f)
-l.Info("test message")
-
+log := wlog.NewLogConfig(InfoLevel, false, 0, false, wlog.NewFileCycle("info", wlog.DayCycle, "* * * * * *"), wlog.NewFormatJson())
+for i := 0; i < 1000000; i++ {
+    log.WithField("item", strconv.Itoa(i))
+    log.Println(i)
+}
 ```
 6. Caller Frame
+- print caller Frame information
 ```go
-l := New()
-l.CallFrameDepth()
-f := make(Fields)
-f["key"] = "value"
-defer f.Close()
-l.SetOutput(f)
+l := wlog.New()
+l.CallFrame()
 l.Info("test message")
-``
+```
+- print error information
+```go
+// a.log
+err := errors.New("error test")
+Err(err)
+//b.log
+l := wlog.New()
+l.CallFrameDepth() // call FrameDepth depth +1 
+func Err(err error){
+    ir err!=nil {
+        l.error()
+    }
+}
+
+```
 7. Output 
 ```stdout
 level="error"	 time="2024-**-** 13:24:03"	field="value"	file="D:/**/go/src/testing/testing.go"	func="testing.tRunner"	key="value"	line="1595"	

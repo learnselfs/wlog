@@ -18,6 +18,7 @@
 <h3 align="center"></h3>
   <p align="center">
 wlog是Go（golang）的结构化记录器，与标准库记录器完全兼容API。
+支持定时任务日志轮转。
     <br />
     <a href="https://github.com//learnselfs/wlog"><strong>探索本项目的文档 »</strong></a>
     <br />
@@ -66,38 +67,50 @@ wlog.Paincf("%s","test message")
 ````
 3. 自定义配置其他项数据
 ```go
-l := New()
-f := make(Fields)
-f["field1"] = "value1"
-f["field2"] = "value2"
-l.WithFields(f)
-l.Info("test message")
+log := wlog.New()
+log.Console()
+log.WithKeys("a", "b", "c")
+for i := 1; i < 100; i++ {
+    log.Values(i, i, i).Info("")
+}
 ```
 4. 自定义输出格式(默认文本格式)
 ```go
-l := New()
-l.SetJsonFormat()
+l := wlog.New()
+l.Json() // l.Text()
 l.Info("test message")
 ```
-5. 自定义输出
+5. 日志轮转
 ```go
-l := New()
-f, _ := os.Create("test.json")
-defer f.Close()
-l.SetOutput(f)
-l.Info("test message")
+log := wlog.NewLogConfig(InfoLevel, false, 0, false, wlog.NewFileCycle("info", wlog.DayCycle, "* * * * * *"), wlog.NewFormatJson())
+for i := 0; i < 1000000; i++ {
+log.WithField("item", strconv.Itoa(i))
+    log.Println(i)
+}
 
 ```
 6. caller 调用信息
+- 打印调用信息
 ```go
-l := New()
-l.CallFrameDepth()
-f := make(Fields)
-f["key"] = "value"
-defer f.Close()
-l.SetOutput(f)
+l := wlog.New()
+l.CallFrame()
 l.Info("test message")
-``
+```
+- 打印错误日志
+```go
+// a.log
+err := errors.New("error test")
+Err(err)
+
+//b.log
+l := wlog.New()
+l.CallFrameDepth() // call FrameDepth depth +1 
+func Err(err error){
+    ir err!=nil {
+        l.error()
+    }
+}
+```
 7. 输出
 ```stdout
 level="error"	 time="2024-**-** 13:24:03"	field="value"	file="D:/**/go/src/testing/testing.go"	func="testing.tRunner"	key="value"	line="1595"	

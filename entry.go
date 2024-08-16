@@ -53,7 +53,7 @@ func (e *Entry) handleLog(level Level, msg string) {
 }
 
 func (e *Entry) Log(level Level, msg string) {
-	if e.log.isLevelEnabled(level) {
+	if e.log.Level(level) {
 		e.handleLog(level, msg)
 	} else {
 		l, _ := level.Marshal()
@@ -92,19 +92,22 @@ func (e *Entry) withFields(fields Fields) {
 }
 
 func (e *Entry) write() {
-	if e.log.isCallFrame {
+	if e.log.callFrame {
 		e.frame = e.CallFrame(e.log.callFrameDepth)
 	}
 	byteData, err := e.log.Format.Format(e)
 	if err != nil {
 		return
 	}
-	_, err = e.log.output.Write(byteData)
-	if err != nil {
-		return
+	if e.log.isOutput {
+		_, err = e.log.output.Write(byteData)
+	} else {
+		err = e.log.File.Write(byteData)
+		if err != nil {
+			return
+		}
 	}
 }
-
 func (e *Entry) clear() {
 	e.fields = make(Fields)
 	e.msg = ""
@@ -130,7 +133,15 @@ func (e *Entry) CallFrame(depth int) *runtime.Frame {
 			if depth <= 0 {
 				return &f
 			}
-			depth --
+			depth--
 		}
 	}
+}
+
+// Cron  linux cron task express:
+// example:
+//
+//	"* * * * * *"
+func (e *Entry) Cron(express string) {
+
 }

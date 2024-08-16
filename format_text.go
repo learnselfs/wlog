@@ -71,7 +71,7 @@ func (t *TextFormat) parse(e *Entry) Fields {
 	if !t.DisableTime {
 		fields[" "+Timestamp] = e.time.Format(t.TimeFormat)
 	}
-	if e.log.isCallFrame {
+	if e.log.callFrame {
 		fields[CallFile] = e.frame.File
 		fields[CallLine] = e.frame.Line
 		fields[CallFunc] = e.frame.Function
@@ -84,7 +84,7 @@ func (t *TextFormat) parse(e *Entry) Fields {
 	return fields
 }
 
-func DefaultTextFormat() *TextFormat {
+func NewFormatText() *TextFormat {
 	return &TextFormat{
 		TimeFormat: time.DateTime,
 	}

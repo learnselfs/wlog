@@ -11,37 +11,66 @@ import (
 
 type Log struct {
 	level Level
+	// entry pool
+	entryPool  EntryPool  // log instance pool
+	bufferPool BufferPool // log buffer pool
+
+	// format
+	Format ReportFormat // log output format : json/text
+
+	isOutput bool // log output stream: file/stdout
+	output   io.Writer
+	mu       *Mu
+	fields   Fields   // log fields
+	keys     []string // log fields keys
 
 	// report print caller information
-	isCallFrame bool
-	// entry pool
-	entryPool  EntryPool
-	bufferPool BufferPool
-	// format
-	Format ReportFormat
-	output io.Writer
-	mu     *Mu
-	fields Fields
+	callFrame      bool // log call frame enable : false
+	callFrameDepth int  // log call frame depth: default 0
 
-	callFrameDepth int
+	// file
+	*File
+	// cron
+	*cron
 }
 
-// New create default logger
 func New() *Log {
+	return NewLogInfoJson()
+}
+func NewLogInfoJson() *Log {
+	return NewLog(InfoLevel, NewFileInfo(), NewFormatJson())
+}
+
+// NewLog create info logger
+func NewLog(level Level, file *File, format ReportFormat) *Log {
+	return NewLogConfig(level, false, 0, false, os.Stdout, file, format)
+}
+
+// NewLogConfig create default logger
+func NewLogConfig(level Level, callFrame bool, callFrameDepth int, isOutput bool, output io.Writer, file *File, format ReportFormat) *Log {
 	l := &Log{
-		level:          InfoLevel,
-		isCallFrame:    false,
+		level:          level,
+		callFrame:      callFrame,
 		bufferPool:     bufferPool,
-		Format:         DefaultTextFormat(),
-		output:         os.Stdout,
+		Format:         format,
+		isOutput:       isOutput,
+		output:         output,
 		mu:             NewMutex(),
 		fields:         make(Fields),
-		callFrameDepth: 0,
+		callFrameDepth: callFrameDepth,
+		File:           file,
+		cron:           Cron,
 	}
 	NewEntryPool(l)
-	l.entryPool = entryPool
+	l.File.cron()
+	//l.entryPool = entryPool
 	return l
 }
+
+// Cron run task
+//func (l *Log) Cron(expression string) {
+//	l.File.cron(expression)
+//}
 
 // SetLevel  define log level
 func (l *Log) SetLevel(level Level) {
@@ -49,7 +78,7 @@ func (l *Log) SetLevel(level Level) {
 }
 
 func (l *Log) CallFramesDepth(depths ...int) {
-	l.isCallFrame = true
+	l.callFrame = true
 	if len(depths) == 0 {
 		l.callFrameDepth = 1
 	} else {
@@ -59,15 +88,15 @@ func (l *Log) CallFramesDepth(depths ...int) {
 
 // Json SetJsonFormat define log output format
 func (l *Log) Json() {
-	l.Format = DefaultJsonFormat()
+	l.Format = NewFormatJson()
 }
 
 // Text SetJsonFormat define log output format
 func (l *Log) Text() {
-	l.Format = DefaultTextFormat()
+	l.Format = NewFormatText()
 }
 
-func (l *Log) isLevelEnabled(level Level) bool {
+func (l *Log) Level(level Level) bool {
 	return l.level <= level
 }
 
@@ -149,16 +178,16 @@ func (l *Log) Panicf(format string, msg ...any) {
 	l.Panic(fmt.Sprintf(format, msg...))
 }
 
-func (l *Log) Print(args ...any) {
-	l.Infoln(args...)
+func (l *Log) Print(msg string) {
+	l.Info(msg)
 }
 
-func (l *Log) Println() {
-	l.Print()
+func (l *Log) Println(msg ...any) {
+	l.Print(fmt.Sprintln(msg...))
 }
 
-func (l *Log) Printf() {
-	l.Print()
+func (l *Log) Printf(f string, msg ...any) {
+	l.Print(fmt.Sprintf(f, msg...))
 }
 
 func (l *Log) newEntry() *Entry {
@@ -171,26 +200,43 @@ func (l *Log) releaseEntry(e *Entry) {
 }
 
 // WithFields appends fields to log
-func (l *Log) WithFields(fields Fields) {
-	for k, v := range fields {
-		l.fields[k] = v
-	}
+func (l *Log) WithFields(fields map[string]any) {
+	//l.fields = make(Fields)
+	//for k, v := range fields {
+	//	l.fields[k] = v
+	//}
+	l.fields = fields
 }
 
 func (l *Log) WithField(key string, value any) {
-	f := make(Fields)
-	f[key] = value
-	l.WithFields(f)
+	l.WithFields(map[string]any{key: value})
 }
 
-// SetOutput define log output
-func (l *Log) SetOutput(output io.Writer) {
-	l.mu.Lock()
-	defer l.mu.UnLock()
+func (l *Log) WithKeys(keys ...string) {
+	l.keys = keys
+}
+func (l *Log) Values(values ...any) *Log {
+	fields := make(map[string]any)
+	for i, k := range l.keys {
+		fields[k] = values[i]
+	}
+	l.WithFields(fields)
+	return l
+	//entry := l.newEntry()
+	//entry.Log(l.level, "")
+
+}
+
+// Console enable default console output log
+func (l *Log) Console() {
+	l.isOutput = !l.isOutput
+}
+
+func (l *Log) Output(output io.Writer) {
 	l.output = output
 }
 
-// SetFormatter custom log formatter
+// Formatter custom log formatter
 func (l *Log) Formatter(f ReportFormat) {
 	l.Format = f
 }
@@ -227,6 +273,6 @@ func (l *Log) TextColorDisable(timeFormat string) {
 	l.TextFormatDetail(timeFormat, false, true, false)
 }
 
-func (l *Log) IsCallFrame() {
-	l.isCallFrame = !l.isCallFrame
+func (l *Log) CallFrame() {
+	l.callFrame = !l.callFrame
 }

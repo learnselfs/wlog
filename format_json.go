@@ -61,7 +61,7 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 		fields[Message] = e.msg
 	}
 	//data[Errors] = e.error
-	if e.log.isCallFrame {
+	if e.log.callFrame {
 		fields[CallFile] = e.frame.File
 		fields[CallLine] = e.frame.Line
 		fields[CallFunc] = e.frame.Function
@@ -73,7 +73,7 @@ func (j *JsonFormat) Parse(e *Entry) Fields {
 	return fields
 }
 
-func DefaultJsonFormat() *JsonFormat {
+func NewFormatJson() *JsonFormat {
 	return &JsonFormat{
 		TimeFormat:   time.DateTime,
 		DisableColor: true,

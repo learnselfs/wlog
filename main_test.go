@@ -5,7 +5,6 @@ package wlog
 
 import (
 	"fmt"
-	"os"
 	"runtime"
 	"strconv"
 	"testing"
@@ -16,9 +15,10 @@ func TestWlog(t *testing.T) {
 	//Error("Error testing start!!!")
 	//Debug("Debug testing start!!!")
 	l := New()
-	l.IsCallFrame()
+	l.CallFrame()
 	//l.SetLevel(PanicLevel)
 	l.Json()
+	l.Console()
 	//l.Format = &JsonFormat{
 	//	DisableTime:  true,
 	//	DisableLevel: true,
@@ -28,7 +28,7 @@ func TestWlog(t *testing.T) {
 	f["key"] = "value"
 	l.WithFields(f)
 	l.WithField("field", "value")
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 10; i++ {
 		//l.Debug("test Message")
 		l.Info("test Message")
 		//l.Warn("test Message")
@@ -39,18 +39,21 @@ func TestWlog(t *testing.T) {
 	}
 }
 
-func TestSetOutput(t *testing.T) {
+func TestConsole(t *testing.T) {
 	l := New()
+	l.Console()
+	log := New()
+	log.Console()
+	//l := New()
 	l.Json()
+	Info("test message111")
 	l.Info("test message")
-	Info("test message")
 	//Panic("......")
-	f, err := os.Create("test.json")
-	if err != nil {
-		return
-	}
-	defer f.Close()
-	l.SetOutput(f)
+	//f, err := os.Create("test.json")
+	//if err != nil {
+	//	return
+	//}
+	//defer f.Close()
 	l.Info("test message")
 
 }
@@ -93,10 +96,12 @@ func TestRuntimes(t *testing.T) {
 
 func TestNewLog(t *testing.T) {
 	l := New()
+	//l := New()
 	l.Info("test message")
 }
 
 func BenchmarkNewLog(b *testing.B) {
+	//l := New()
 	l := New()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -121,6 +126,7 @@ func BenchmarkNewLog(b *testing.B) {
 
 func BenchmarkNewTextLog(b *testing.B) {
 	l := New()
+	//l := New()
 	l.Json()
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -132,7 +138,8 @@ func BenchmarkNewTextLog(b *testing.B) {
 
 func BenchmarkNewField(b *testing.B) {
 	l := New()
-	f := make(Fields)
+	//l := New()
+	f := make(map[string]any)
 	f["field"] = "value"
 	l.WithFields(f)
 	b.RunParallel(func(pb *testing.PB) {
@@ -156,3 +163,34 @@ func BenchmarkNewField(b *testing.B) {
 // 		}
 // 	})
 // }
+
+func TestLog(t *testing.T) {
+	l := New()
+	//l := New()
+	//l.IsCallFrame()
+	//l.CallFramesDepth(1)
+	for i := 0; i < 30; i++ {
+		l.Infof("%s, %s, %s", "a", "b", "c")
+		l.WithField(strconv.Itoa(i), i)
+	}
+}
+
+func TestLogWithKeys(t *testing.T) {
+	log := New()
+	log.Console()
+	log.WithKeys("a", "b", "c")
+	for i := 1; i < 100; i++ {
+		log.Values(i, i, i).Info("")
+	}
+}
+func TestLogFile(t *testing.T) {
+	log := New()
+	log.Console()
+	//log.Console()
+	////log := New()
+	for i := 0; i < 1000000; i++ {
+		log.WithField("item", strconv.Itoa(i))
+		log.Println(i)
+	}
+
+}

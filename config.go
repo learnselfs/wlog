@@ -23,11 +23,20 @@ const (
 	CallFunc  string = "func"
 	CallLine  string = "line"
 )
+const (
+	SecondCycle Cycle = iota
+	MinuteCycle
+	HourCycle
+	DayCycle
+	MonthCycle
+	WeekCycle
+)
 
 var (
 	bufferPool BufferPool
 	entryPool  EntryPool
 	log        *Log
+	Cron       *cron
 )
 
 type (

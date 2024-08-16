@@ -39,7 +39,7 @@ func initPool() {
 		},
 	}
 }
-func NewEntryPool(l *Log) {
+func NewEntryPool(l *Log) *Log {
 
 	entryPool = &DefaultEntryPool{
 		pool: &sync.Pool{
@@ -48,4 +48,6 @@ func NewEntryPool(l *Log) {
 			},
 		},
 	}
+	l.entryPool = entryPool
+	return l
 }
