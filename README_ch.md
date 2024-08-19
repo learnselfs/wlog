@@ -69,9 +69,9 @@ wlog.Paincf("%s","test message")
 ```go
 log := wlog.New()
 log.Console()
-log.WithKeys("a", "b", "c")
+log.WithKeys("key1", "key2", "key3")
 for i := 1; i < 100; i++ {
-    log.Values(i, i, i).Info("")
+    log.InfoValues(i+1, i+2, i+3)
 }
 ```
 4. 自定义输出格式(默认文本格式)

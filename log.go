@@ -224,7 +224,24 @@ func (l *Log) Values(values ...any) *Log {
 	return l
 	//entry := l.newEntry()
 	//entry.Log(l.level, "")
-
+}
+func (l *Log) DebugValues(values ...any) {
+	l.Values(values...).Debug("")
+}
+func (l *Log) InfoValues(values ...any) {
+	l.Values(values...).Info("")
+}
+func (l *Log) WarnValues(values ...any) {
+	l.Values(values...).Warn("")
+}
+func (l *Log) ErrorValues(values ...any) {
+	l.Values(values...).Error("")
+}
+func (l *Log) FatalValues(values ...any) {
+	l.Values(values...).Fatal("")
+}
+func (l *Log) PanicValues(values ...any) {
+	l.Values(values...).Panic("")
 }
 
 // Console enable default console output log

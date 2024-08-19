@@ -11,7 +11,6 @@ func init() {
 	initPool()
 	log = New()
 	//log = New()
-
 }
 
 func Print(msg string) {
@@ -104,4 +103,40 @@ func Json() {
 
 func Text() {
 	log.Text()
+}
+
+func Values(values ...any) {
+	log.Values(values...)
+}
+
+func WithFields(fields map[string]any) {
+	log.WithFields(fields)
+}
+
+func WithField(key string, value any) {
+	log.WithField(key, value)
+}
+
+func WithKeys(kes ...string) {
+	log.WithKeys()
+}
+
+func DebugValues(values ...any) {
+	log.DebugValues(values...)
+}
+
+func InfoValues(values ...any) {
+	log.InfoValues(values...)
+}
+
+func ErrorValues(values ...any) {
+	log.ErrorValues(values...)
+}
+
+func FatalValues(values ...any) {
+	log.FatalValues(values...)
+}
+
+func PanicValues(values ...any) {
+	log.PanicValues(values...)
 }

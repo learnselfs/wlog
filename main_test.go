@@ -188,9 +188,29 @@ func TestLogFile(t *testing.T) {
 	log.Console()
 	//log.Console()
 	////log := New()
-	for i := 0; i < 1000000; i++ {
+	for i := 0; i < 10000; i++ {
 		log.WithField("item", strconv.Itoa(i))
 		log.Println(i)
 	}
 
+}
+
+// go test -run # -bench BenchmarkLog -benchmem
+func BenchmarkLog(b *testing.B) {
+	log := New()
+	//log.Console()
+	for i := 0; i < b.N; i++ {
+		log.Println(i * 100000)
+	}
+	//Cron.Stop()
+}
+
+// go test -run # -bench BenchmarkLogConsole -benchmem
+func BenchmarkLogConsole(b *testing.B) {
+	log := New()
+	log.Console()
+	for i := 0; i < b.N; i++ {
+		log.Println(i * 100000)
+	}
+	//Cron.Stop()
 }
